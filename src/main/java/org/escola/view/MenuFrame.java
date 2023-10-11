@@ -38,15 +38,15 @@ public class MenuFrame extends JFrame {
         left.add(salas);
         JButton alunos = new JButton("Ver alunos");// Botão "Gerenciar Salas"
         left.add(alunos);
-        JButton resp = new JButton("Ver responsaveis");// Botão "Gerenciar Salas"
+        JButton resp = new JButton("Ver Responsáveis");// Botão "Gerenciar Salas"
         left.add(resp);
         JButton boletim = new JButton("Ver boletim");// Botão "Gerenciar Salas"
         left.add(resp);
-        JButton CalendarioEscolar = new JButton("Ver CalendarioEscolar");// Botão "Gerenciar Salas"
-        left.add(resp);
+        JButton CalendarioEscolar = new JButton("Ver Calendario Escolar");// Botão "Gerenciar Salas"
+        left.add(CalendarioEscolar);
         JButton Biblioteca = new JButton("Ver Biblioteca");// Botão "Gerenciar Salas"
         left.add(resp);
-        JButton conatodeemergencia = new JButton("Ver ContatoEmergencia");// Botão "Gerenciar Salas"
+        JButton conatodeemergencia = new JButton("Ver Contato de Emergência");// Botão "Gerenciar Salas"
         left.add(conatodeemergencia);
         JButton Funcionarios = new JButton("Ver Funcionarios");// Botão "Gerenciar Salas"
         left.add(resp);
@@ -66,7 +66,7 @@ public class MenuFrame extends JFrame {
         center.add(getAlunos(), "ALUNOS");// Adiciona o painel de Salas ao centro com o nome "SALAS"
         center.add(getResponsavel(), "RESPONSAVEL");// Adiciona o painel de Salas ao centro com o nome "SALAS"
         center.add(getResponsavel(), "boletim");// Adiciona o painel de Salas ao centro com o nome "SALAS"
-        center.add(getResponsavel(), "CalendarioEscolar");// Adiciona o painel de Salas ao centro com o nome "SALAS"
+        center.add(getCalendar(), "CalendarioEscolar");// Adiciona o painel de Salas ao centro com o nome "SALAS"
         center.add(getResponsavel(), "Biblioteca");// Adiciona o painel de Salas ao centro com o nome "SALAS"
         center.add(getCC(), "ContatoEmergencia");// Adiciona o painel de Salas ao centro com o nome "SALAS"
         center.add(getResponsavel(), "Cantinas");// Adiciona o painel de Salas ao centro com o nome "SALAS"
@@ -93,13 +93,13 @@ public class MenuFrame extends JFrame {
         resp.addActionListener(e -> {
             card.show(center, "boletim");// Mostra o painel de Salas quando o botão é clicado
         });
-        resp.addActionListener(e -> {
+        CalendarioEscolar.addActionListener(e -> {
             card.show(center, "CalendarioEscolar");// Mostra o painel de Salas quando o botão é clicado
         });
         resp.addActionListener(e -> {
             card.show(center, "Biblioteca");// Mostra o painel de Salas quando o botão é clicado
         });
-        resp.addActionListener(e -> {
+        conatodeemergencia.addActionListener(e -> {
             card.show(center, "ContatoEmergencia");// Mostra o painel de Salas quando o botão é clicado
         });
         resp.addActionListener(e -> {
@@ -304,11 +304,34 @@ public class MenuFrame extends JFrame {
         try{
             Connection connection = Database.getConnection();
             Statement statement = connection.createStatement();
-            ResultSet set = statement.executeQuery("SELECT * FROM admin;");// Consulta SQL para obter salas
+            ResultSet set = statement.executeQuery("SELECT * FROM ContatoEmergencia;");// Consulta SQL para obter salas
             while(set.next()){
                 Vector<String> val = new Vector<>();
-                val.add(set.getString("username"));
-                val.add(Base64.getEncoder().encodeToString(set.getString("password").getBytes()));
+                val.add(set.getString("nome"));
+                val.add("(11) "+set.getString("telefone"));
+                data.add(val);
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        JTable table = new JTable(data, cols);// Cria uma tabela com os dados e cabeçalhos
+        content.add(new JScrollPane(table), BorderLayout.CENTER);// Adiciona a tabela a um painel rolável e o coloca no centro
+        return content;
+    }
+
+    private JPanel getCalendar(){
+        JPanel content = new JPanel(new BorderLayout());
+        Vector<String> cols = new Vector<>(List.of("Data", "Evento"));
+        Vector<Vector<String>> data = new Vector<>();
+        try{
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery("SELECT * FROM CalendarioEscolar;");// Consulta SQL para obter salas
+            while(set.next()){
+                Vector<String> val = new Vector<>();
+                val.add(set.getString("data"));
+                val.add(set.getString("evento"));
                 data.add(val);
             }
 

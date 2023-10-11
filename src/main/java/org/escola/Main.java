@@ -1,14 +1,16 @@
 package org.escola;
 
+import com.formdev.flatlaf.intellijthemes.FlatGradiantoMidnightBlueIJTheme;
 import org.ajbrown.namemachine.Gender;
 import org.ajbrown.namemachine.Name;
 import org.ajbrown.namemachine.NameGenerator;
 import org.escola.view.LoginFrame;
 
+import javax.swing.*;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Date;
 
 public class Main {
 
@@ -17,6 +19,11 @@ public class Main {
     }
 
     public Main() {
+        try{
+            UIManager.setLookAndFeel(new FlatGradiantoMidnightBlueIJTheme());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         NameGenerator nameGenerator = new NameGenerator(); // gerador de nomes
         Database.startConnection(); // inicia a conexão no banco de dados
         Connection connection = Database.getConnection();
@@ -42,7 +49,10 @@ public class Main {
             statement.executeUpdate("INSERT OR IGNORE INTO admin (username, password) VALUES ('admin', 'admin');");
             int ts = 100;
             Random rd = new Random(); //  cria um random para gerar números aleatorios
+            List<String> eventos = Arrays.asList("Colação de grau", "Dia D","Dia dos Pais", "Dia das crianças", "Reunião de Pais", "Conselho de Classe");
+            SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
             for (int i = 1; i < ts; i++) {
+                statement.executeUpdate("INSERT OR IGNORE INTO CalendarioEscolar (data, evento) VALUES ('"+SDF.format(new Date())+"', '"+eventos.get(rd.nextInt(eventos.size()))+"');");
                 // cria os dados padrão
                 int cadeiras = 5;
                 statement.executeUpdate("INSERT OR IGNORE INTO turmas (sala, ano) VALUES ('"+i+"', '"+rd.nextInt(1, 4)+" TI');");
@@ -51,6 +61,7 @@ public class Main {
                 for (Name name : names) { // adiciona os alunos com nomes aleatorios
                     // faz a query para add o aluno com nome gerado e com data de nascimento do de agora na sala que esta sendo trabalhada no momento
                     statement.executeUpdate("INSERT OR IGNORE INTO alunos (nome, dataDeNascimento, sala) VALUES ('"+name.getFirstName()+"', '"+System.currentTimeMillis()+"', '"+i+"')");
+                    statement.executeUpdate("INSERT OR IGNORE INTO ContatoEmergencia (nome, telefone) VALUES ('"+name.getFirstName()+"', '"+rd.nextInt(111111111, 999999999)+"')");
                 }
             }
 
