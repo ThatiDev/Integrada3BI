@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Vector;
 
@@ -29,6 +30,8 @@ public class MenuFrame extends JFrame {
         left.setBackground(new Color(3, 198, 252));// Define a cor de fundo do painel
         BoxLayout box = new BoxLayout(left, BoxLayout.Y_AXIS); // Define um layout de caixa vertical para o painel
         left.setLayout(box);
+        JButton adm = new JButton("Ver admin");// Botão "Gerenciar Salas"
+        left.add(adm);
         JButton turma = new JButton("Gerenciar Turmas");// Botão "Gerenciar Turmas"
         left.add(turma);
         JButton salas = new JButton("Gerenciar Salas");// Botão "Gerenciar Salas"
@@ -36,6 +39,18 @@ public class MenuFrame extends JFrame {
         JButton alunos = new JButton("Ver alunos");// Botão "Gerenciar Salas"
         left.add(alunos);
         JButton resp = new JButton("Ver responsaveis");// Botão "Gerenciar Salas"
+        left.add(resp);
+        JButton boletim = new JButton("Ver boletim");// Botão "Gerenciar Salas"
+        left.add(resp);
+        JButton CalendarioEscolar = new JButton("Ver CalendarioEscolar");// Botão "Gerenciar Salas"
+        left.add(resp);
+        JButton Biblioteca = new JButton("Ver Biblioteca");// Botão "Gerenciar Salas"
+        left.add(resp);
+        JButton conatodeemergencia = new JButton("Ver ContatoEmergencia");// Botão "Gerenciar Salas"
+        left.add(conatodeemergencia);
+        JButton Funcionarios = new JButton("Ver Funcionarios");// Botão "Gerenciar Salas"
+        left.add(resp);
+        JButton Cantinas = new JButton("Ver Cantinas");// Botão "Gerenciar Salas"
         left.add(resp);
 
         JPanel center = new JPanel();
@@ -45,13 +60,23 @@ public class MenuFrame extends JFrame {
 
         // ADICIONA AS OUTRAS TELAS
         center.add(getHome(), "HOME");// Adiciona o painel HOME ao centro com o nome "HOME"
+        center.add(getAdmin(), "admin");// Adiciona o painel de Salas ao centro com o nome "SALAS"
         center.add(getTurmas(), "TURMAS");//Adiciona o painel de Turmas ao centro com o nome "TURMAS"
         center.add(getSalas(), "SALAS");// Adiciona o painel de Salas ao centro com o nome "SALAS"
         center.add(getAlunos(), "ALUNOS");// Adiciona o painel de Salas ao centro com o nome "SALAS"
         center.add(getResponsavel(), "RESPONSAVEL");// Adiciona o painel de Salas ao centro com o nome "SALAS"
+        center.add(getResponsavel(), "boletim");// Adiciona o painel de Salas ao centro com o nome "SALAS"
+        center.add(getResponsavel(), "CalendarioEscolar");// Adiciona o painel de Salas ao centro com o nome "SALAS"
+        center.add(getResponsavel(), "Biblioteca");// Adiciona o painel de Salas ao centro com o nome "SALAS"
+        center.add(getCC(), "ContatoEmergencia");// Adiciona o painel de Salas ao centro com o nome "SALAS"
+        center.add(getResponsavel(), "Cantinas");// Adiciona o painel de Salas ao centro com o nome "SALAS"
+
 
         // ADICIONA OS EVENTOS DE CLICK NO BOTAO
 
+        adm.addActionListener(e -> {
+            card.show(center, "admin");// Mostra o painel de Salas quando o botão é clicado
+        });
         turma.addActionListener(e -> {
             card.show(center, "TURMAS"); // Mostra o painel de Turmas quando o botão é clicado
         });
@@ -65,6 +90,22 @@ public class MenuFrame extends JFrame {
         resp.addActionListener(e -> {
             card.show(center, "RESPONSAVEL");// Mostra o painel de Salas quando o botão é clicado
         });
+        resp.addActionListener(e -> {
+            card.show(center, "boletim");// Mostra o painel de Salas quando o botão é clicado
+        });
+        resp.addActionListener(e -> {
+            card.show(center, "CalendarioEscolar");// Mostra o painel de Salas quando o botão é clicado
+        });
+        resp.addActionListener(e -> {
+            card.show(center, "Biblioteca");// Mostra o painel de Salas quando o botão é clicado
+        });
+        resp.addActionListener(e -> {
+            card.show(center, "ContatoEmergencia");// Mostra o painel de Salas quando o botão é clicado
+        });
+        resp.addActionListener(e -> {
+            card.show(center, "Cantinas");// Mostra o painel de Salas quando o botão é clicado
+        });
+
 
 
         this.setVisible(true); // Torna a janela visível
@@ -222,6 +263,52 @@ public class MenuFrame extends JFrame {
                 val.add(set.getString("mae"));
                 val.add(set.getString("pai"));
                 val.add(String.valueOf(set.getInt("aluno")));
+                data.add(val);
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        JTable table = new JTable(data, cols);// Cria uma tabela com os dados e cabeçalhos
+        content.add(new JScrollPane(table), BorderLayout.CENTER);// Adiciona a tabela a um painel rolável e o coloca no centro
+        return content;
+    }
+
+    private JPanel getAdmin(){
+        JPanel content = new JPanel(new BorderLayout());
+        Vector<String> cols = new Vector<>(List.of("Usuario", "Senha (hash)"));
+        Vector<Vector<String>> data = new Vector<>();
+        try{
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery("SELECT * FROM admin;");// Consulta SQL para obter salas
+            while(set.next()){
+                Vector<String> val = new Vector<>();
+                val.add(set.getString("username"));
+                val.add(Base64.getEncoder().encodeToString(set.getString("password").getBytes()));
+                data.add(val);
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        JTable table = new JTable(data, cols);// Cria uma tabela com os dados e cabeçalhos
+        content.add(new JScrollPane(table), BorderLayout.CENTER);// Adiciona a tabela a um painel rolável e o coloca no centro
+        return content;
+    }
+
+    private JPanel getCC(){
+        JPanel content = new JPanel(new BorderLayout());
+        Vector<String> cols = new Vector<>(List.of("Aluno", "Telefone"));
+        Vector<Vector<String>> data = new Vector<>();
+        try{
+            Connection connection = Database.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet set = statement.executeQuery("SELECT * FROM admin;");// Consulta SQL para obter salas
+            while(set.next()){
+                Vector<String> val = new Vector<>();
+                val.add(set.getString("username"));
+                val.add(Base64.getEncoder().encodeToString(set.getString("password").getBytes()));
                 data.add(val);
             }
 
